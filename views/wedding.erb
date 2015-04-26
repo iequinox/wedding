@@ -5,15 +5,15 @@
   #comment
 %>
 <% #ticket
-# !! icon
 # !! big pic
 # !! ga
 # !! easter egg
 # !! 86 bug
 # !! test mobile/ie
-# !! lag
 # loading gif
 # weixin
+# gzip
+# js uglify
 %>
 <% total_img_num = 89 %>
 <% init_img_num = 10 %>
@@ -24,6 +24,7 @@
   <title>雁轩</title>
   <!-- TODO -->
   <link rel='stylesheet' href='css/main.css' media='screen' />
+  <link rel="shortcut icon" href="images/icon.png">
 </head>
 <body>
   <div id='header'>
@@ -36,6 +37,12 @@
         <strong></strong>
       </div>
       <% end %>
+    </div>
+    <div id='modal-container' class='hidden'>
+      <div id='modal'></div>
+      <div id='large-image-container'>
+        <img id='large-image' />
+      </div>
     </div>
   </div>
   <div id='foot'></div>
@@ -126,6 +133,38 @@
       }, 999);
       */
     };
+
+    // Click
+    $(document).on('click', '.grid', function() {
+      var id = $(this).attr('id');
+      $('#modal-container').removeClass('hidden');
+      var imageEl = $('#large-image');
+      imageEl.attr('src', 'images/' + id + '-large.JPG');
+      imageEl.load(function() {
+        var height = $(window).height();
+        var width = GLOBALS.originalColumnNum * GLOBALS.COLUMN_WIDTH;
+        var imgHeight = imageEl.height();
+        var imgWidth = imageEl.width();
+        if (imgHeight * width > imgWidth * height) {
+          ajustLargetImage(imageEl, height, height * imgWidth / imgHeight, height, width);
+        } else {
+          ajustLargetImage(imageEl, width * imgHeight / imgWidth, width, height, width);
+        };
+      });
+    });
+    var ajustLargetImage = function(el, height, width, windowHeight, windowWidth) {
+      el.attr('height', height + 'px');
+      el.attr('width', width + 'px');
+      var topOffset = (windowHeight - height) / 2; 
+      var leftOffset = (windowWidth - width) / 2; 
+      el.parent('#large-image-container').css({
+        'top': topOffset,
+        'left': leftOffset
+      });
+    };
+    $(document).on('click', '#modal-container', function() {
+      $('#modal-container').addClass('hidden');
+    });
 
     // Utils
     var calculateCurrentColumnNum = function() {
