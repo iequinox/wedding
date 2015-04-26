@@ -1,0 +1,182 @@
+<!doctype html>
+<% # TODO:
+  #filter; comment
+  #lazy load; request Limit;
+  #comment
+%>
+<% #ticket
+# !! icon
+# !! big pic
+# !! ga
+# !! easter egg
+# !! 86 bug
+# !! test mobile/ie
+# !! lag
+# loading gif
+# weixin
+%>
+<% total_img_num = 89 %>
+<% init_img_num = 10 %>
+
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>雁轩</title>
+  <!-- TODO -->
+  <link rel='stylesheet' href='css/main.css' media='screen' />
+</head>
+<body>
+  <div id='header'>
+  </div>
+  <div id='main'>
+    <div id="cascade-container">
+      <% 0.upto (init_img_num - 1) do |i| %>
+      <div class="grid hidden" id="<%= i %>">
+        <div class="thumb"><img src="images/<%= i %>-small.jpg" width="250" /></div>
+        <strong></strong>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <div id='foot'></div>
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript">
+  //$(function() {
+    $(window).load(function() {
+      renderCascade();
+      checkHitBottom();
+    });
+    var showNewCascade = function() {
+      if (GLOBALS.renderedGridIndex >= GLOBALS.TOTAL_IMG_NUM - 1) return;
+      var batchId = (GLOBALS.renderedGridIndex + 1);
+      var newElStr = '<div id="batch-' + batchId + '">';
+      for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
+        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div><strong></strong></div>';
+      };
+      var newEl = $(newElStr);
+      GLOBALS.loadImgCounter = 0;
+      $('#cascade-container').append(newEl);
+      $('#batch-' + batchId + ' img').load(function() {
+        GLOBALS.loadImgCounter ++;
+        if (GLOBALS.loadImgCounter == GLOBALS.loadImgBatchSize) {
+          renderCascade();
+          //checkHitBottom();
+          GLOBALS.bottomCheckProcessing = false;
+        };
+      });
+    };
+    // Scroll event
+    $(window).scroll(function(){
+      checkHitBottom();
+    });
+
+    var checkHitBottom = function() {
+      if (GLOBALS.bottomCheckProcessing) return;
+      if (hasHitBottom()) {
+        GLOBALS.bottomCheckProcessing = true;
+        // Make it async so scroll event could pop up; and thus there won't be a perceivable scroll lag
+        //setTimeout(showNewCascade, 1);
+        showNewCascade();
+      };
+    }
+
+    // Window resize event
+    $(window).resize(function() {
+      // TODO: lock here?
+      var newColumnNum = calculateCurrentColumnNum();
+      if (GLOBALS.originalColumnNum != newColumnNum) {
+        GLOBALS.originalColumnNum = newColumnNum;
+        GLOBALS.columnHeights = [];
+        GLOBALS.renderedGridIndex = -1;
+        renderCascade();
+        checkHitBottom();
+      };
+    });
+
+    // Main render logic
+    var renderCascade = function() {
+      var columnNum = calculateCurrentColumnNum();
+      GLOBALS.originalColumnNum = columnNum;
+      var grids = $('.grid');
+      for (var i = 0; i < grids.length; i++) {
+        if (i <= GLOBALS.renderedGridIndex) continue;
+        var el = $(grids[i]);
+        var columnIndex = getMinHeightColumn(GLOBALS.columnHeights, columnNum);
+        var leftOffset = columnIndex * GLOBALS.COLUMN_WIDTH;
+        var topOffset = GLOBALS.columnHeights[columnIndex] ? GLOBALS.columnHeights[columnIndex] : 0;
+        moveGrid(el, leftOffset, topOffset);
+        var height = el.height() + (GLOBALS.VERTICAL_PADDING + GLOBALS.VERTICAL_MARGIN) * 2;
+        GLOBALS.columnHeights[columnIndex] = topOffset + height;
+        GLOBALS.renderedGridIndex ++;
+      };
+    };
+
+    var moveGrid = function(el, leftOffset, topOffset) {
+      el.removeClass('hidden');
+      el.css({
+        'position' : 'absolute',
+        'left' : leftOffset,
+        'top' : topOffset//,
+        //'opacity' : '0'
+      });
+      /*
+      el.stop().animate({
+        'opacity' : '1'
+      }, 999);
+      */
+    };
+
+    // Utils
+    var calculateCurrentColumnNum = function() {
+      var num = Math.floor($(window).width() / GLOBALS.COLUMN_WIDTH);
+      if (num < 1) num = 1;
+      return num;
+    };
+    var getMinHeightColumn = function(arr, columnNum) {
+      if (arr.length < columnNum) return arr.length;
+      var min = Infinity;
+      var index = 0;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < min) {
+          index = i;
+          min = arr[i];
+        };
+      };
+      return index;
+    };
+    var hasHitBottom = function() {
+      var minColumnHeight = Math.min.apply(null, GLOBALS.columnHeights);
+      return (minColumnHeight < $(this).scrollTop() + $(this).height());
+    };
+    var addCookie = function(key, value) {
+      document.cookie = escape(key) + "=" + escape(value);
+    };
+    var GLOBALS = {
+      COLUMN_WIDTH : 310,
+      VERTICAL_PADDING: 10,
+      VERTICAL_MARGIN : 10,
+      TOTAL_IMG_NUM : <%= total_img_num %>,
+      loadImgBatchSize : 5,
+      loadImgCounter : 0,
+      columnHeights : [],
+      originalColumnNum : 0,
+      renderedGridIndex : -1,
+      bottomCheckProcessing: false,
+      easterCount : 1
+    };
+    // Easter egg
+    var showMeTheSecrets = function() {
+    };
+    var clickEasterEgg = function() {
+      if (GLOBALS.easterCount < 3) {
+        GLOBALS.easterCount += 1;
+        if (GLOBALS.easterCount == 3) {
+          addCookie("easterEgg", "true");
+          showMeTheSecrets();
+        };
+      };
+    };
+//  })(jQuery);
+</script>
+</html>
