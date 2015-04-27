@@ -7,16 +7,20 @@
 # weixin or guid cookie
 %>
 <% #ticket
-# !! zoom in or 放大镜
+# !! singleton tucao
+# !! tucao 毛玻璃效果
+# !! zoom in or 放大镜: cursor; overflow; 100%
 # !! bg: color or pic
-# !! big: vertical align 
+# !! modal bug: vertical align 
+# !! footer or easter button
 # !! ga
-# !! big: white padding?
-# !! easter egg
+# !! modal style: white padding?
 # !! test mobile
 # !! disallow robots
+# !! ruby get cookie
 # !! browser static cache
 # !! server cache
+# css global init
 # big place holder: add cache for small img and use it
 # big pic load lag; use js to load img
 # big pic: add arrow
@@ -46,7 +50,7 @@
       <% 0.upto (init_img_num - 1) do |i| %>
       <div class="grid hidden" id="<%= i %>">
         <div class="thumb"><img src="images/<%= i %>-small.jpg" width="250" /></div>
-        <strong></strong>
+        <div class='tucao'></div>
       </div>
       <% end %>
     </div>
@@ -57,12 +61,17 @@
       </div>
     </div>
   </div>
-  <div id='foot'></div>
+  <div id='foot'>
+    <div id='easter-button'>
+      test
+    </div>
+  </div>
 </body>
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript">
   //$(function() {
     $(window).load(function() {
+      addTucao($('.grid'));
       renderCascade();
       checkHitBottom();
     });
@@ -72,15 +81,18 @@
       var newElStr = '<div id="batch-' + batchId + '">';
       var actualLoadBatchSize = 0;
       for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
-        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div><strong></strong></div>';
+        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div><div class="tucao"></div></div>';
         actualLoadBatchSize ++;
       };
       var newEl = $(newElStr);
       GLOBALS.loadImgCounter = 0;
       $('#cascade-container').append(newEl);
-      $('#batch-' + batchId + ' img').load(function() {
+      var batchEl = $('#batch-' + batchId);
+      console.log(batchEl);
+      batchEl.find('img').load(function() {
         GLOBALS.loadImgCounter ++;
         if (GLOBALS.loadImgCounter == actualLoadBatchSize) {
+          addTucao(batchEl.find('.grid'));
           renderCascade();
           //checkHitBottom();
           GLOBALS.bottomCheckProcessing = false;
@@ -138,15 +150,15 @@
     var moveGrid = function(el, leftOffset, topOffset) {
       el.removeClass('hidden');
       el.css({
-        'position' : 'absolute',
-        'left' : leftOffset,
-        'top' : topOffset
+        'position': 'absolute',
+        'left': leftOffset,
+        'top': topOffset
       });
     };
 
     // Modal
-    $(document).on('click', '.grid', function() {
-      var id = $(this).attr('id');
+    $(document).on('click', '.grid img', function() {
+      var id = $(this).parents('.grid').attr('id');
       $('#modal-container').removeClass('hidden');
       var imageEl = $('#large-image');
       // Set the src to the small img first, as a fallback
@@ -200,30 +212,45 @@
       document.cookie = escape(key) + "=" + escape(value);
     };
     var GLOBALS = {
-      COLUMN_WIDTH : 310,
+      COLUMN_WIDTH: 310,
       VERTICAL_PADDING: 10,
-      VERTICAL_MARGIN : 10,
-      TOTAL_IMG_NUM : <%= total_img_num %>,
-      loadImgBatchSize : 5,
-      loadImgCounter : 0,
-      columnHeights : [],
-      originalColumnNum : 0,
-      renderedGridIndex : -1,
+      VERTICAL_MARGIN: 10,
+      TOTAL_IMG_NUM: <%= total_img_num %>,
+      loadImgBatchSize: 5,
+      loadImgCounter: 0,
+      columnHeights: [],
+      originalColumnNum: 0,
+      renderedGridIndex: -1,
       bottomCheckProcessing: false,
-      easterCount : 1
+      easterCount: 0,
+      easterOn: true,
+      tucaoArr: <%= tucao_arr %>
     };
     // Easter egg
     var showMeTheSecrets = function() {
+      $('.tucao').removeClass('easter');
     };
-    var clickEasterEgg = function() {
+    $('#easter-button').click(function() {
       if (GLOBALS.easterCount < 3) {
         GLOBALS.easterCount += 1;
         if (GLOBALS.easterCount == 3) {
           addCookie("easterEgg", "true");
+          GLOBALS.easterOn = true;
           showMeTheSecrets();
         };
       };
+    });
+    var addTucao = function(els) {
+      for (var i = 0; i < els.length; i ++) {
+        var el = $(els[i]);
+        var id = el.attr('id');
+        var tucaoEl = el.children('.tucao').text(GLOBALS.tucaoArr[id]);
+        if (!GLOBALS.easterOn) {
+          tucaoEl.addClass('easter');
+        };
+      };
     };
+
 //  })(jQuery);
 </script>
 </html>

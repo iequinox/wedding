@@ -44,9 +44,14 @@ a:hover, a: active {
   -o-transition: top 1s ease, left 1s ease;
   -ms-transition: top 1s ease, left 1s ease;
 }
-
+.clear-float {
+  clear: both;
+}
 .hidden {
   display: none;
+}
+.easter {
+  visibility: hidden;
 }
 
 .grid .thumb img {
@@ -56,16 +61,9 @@ a:hover, a: active {
   width: 250px;
   cursor: pointer;
 }
-.grid .thumb img {
-  max-width: 100%;
-  background: #ccc;
-  display: block;
-}
-.grid strong {
-  border-bottom: 1px solid #ccc;
-  margin: 10px 0;
-  display: block;
-  padding: 0 0 5px;
+.grid .tucao {
+  //border-bottom: 1px solid #ccc;
+  margin: 10px 0 5px;
   font-size: 17px;
 }
 
@@ -96,4 +94,7 @@ a:hover, a: active {
   box-shadow: 0 0 50px #fff;
   -moz-box-shadow: 0 0 50px #fff;
   -webkit-box-shadow: 0 0 50px #fff;
+}
+#easter-button {
+  float: right;
 }
