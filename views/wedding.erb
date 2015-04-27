@@ -1,17 +1,29 @@
 <!doctype html>
 <% # TODO:
-  #filter; comment
-  #lazy load; request Limit;
-  #comment
+# filter
+# lazy load
+# request Limit
+# thumbs up; comment
+# weixin or guid cookie
 %>
 <% #ticket
-# !! big pic
+# !! zoom in or 放大镜
+# !! bg: color or pic
+# !! big: vertical align 
 # !! ga
+# !! big: white padding?
 # !! easter egg
-# !! 86 bug
-# !! test mobile/ie
-# loading gif
-# weixin
+# !! test mobile
+# !! disallow robots
+# !! browser static cache
+# !! server cache
+# big place holder: add cache for small img and use it
+# big pic load lag; use js to load img
+# big pic: add arrow
+# bottom loading gif
+# scroll to bottom + modal: quick flash
+# test ie
+# img alt title
 # gzip
 # js uglify
 %>
@@ -58,15 +70,17 @@
       if (GLOBALS.renderedGridIndex >= GLOBALS.TOTAL_IMG_NUM - 1) return;
       var batchId = (GLOBALS.renderedGridIndex + 1);
       var newElStr = '<div id="batch-' + batchId + '">';
+      var actualLoadBatchSize = 0;
       for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
         newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div><strong></strong></div>';
+        actualLoadBatchSize ++;
       };
       var newEl = $(newElStr);
       GLOBALS.loadImgCounter = 0;
       $('#cascade-container').append(newEl);
       $('#batch-' + batchId + ' img').load(function() {
         GLOBALS.loadImgCounter ++;
-        if (GLOBALS.loadImgCounter == GLOBALS.loadImgBatchSize) {
+        if (GLOBALS.loadImgCounter == actualLoadBatchSize) {
           renderCascade();
           //checkHitBottom();
           GLOBALS.bottomCheckProcessing = false;
@@ -104,6 +118,8 @@
     // Main render logic
     var renderCascade = function() {
       var columnNum = calculateCurrentColumnNum();
+      var containerWidth = columnNum * GLOBALS.COLUMN_WIDTH;
+      $('#cascade-container').css({'width': containerWidth + 'px'});
       GLOBALS.originalColumnNum = columnNum;
       var grids = $('.grid');
       for (var i = 0; i < grids.length; i++) {
@@ -124,45 +140,37 @@
       el.css({
         'position' : 'absolute',
         'left' : leftOffset,
-        'top' : topOffset//,
-        //'opacity' : '0'
+        'top' : topOffset
       });
-      /*
-      el.stop().animate({
-        'opacity' : '1'
-      }, 999);
-      */
     };
 
-    // Click
+    // Modal
     $(document).on('click', '.grid', function() {
       var id = $(this).attr('id');
       $('#modal-container').removeClass('hidden');
       var imageEl = $('#large-image');
+      // Set the src to the small img first, as a fallback
+      //imageEl.attr('src', 'images/' + id + '-small.JPG');
       imageEl.attr('src', 'images/' + id + '-large.JPG');
-      imageEl.load(function() {
-        var height = $(window).height();
-        var width = GLOBALS.originalColumnNum * GLOBALS.COLUMN_WIDTH;
-        var imgHeight = imageEl.height();
-        var imgWidth = imageEl.width();
-        if (imgHeight * width > imgWidth * height) {
-          ajustLargetImage(imageEl, height, height * imgWidth / imgHeight, height, width);
-        } else {
-          ajustLargetImage(imageEl, width * imgHeight / imgWidth, width, height, width);
-        };
-      });
+      // While the image is loading, we can use the thumbnail pic to calculate the display width/height.
+      var smallImageEl = $('#' + id + ' img');
+      var ratio = 0.9;
+      var height = $(window).height();
+      var width = $(window).width();
+      var imgHeight = smallImageEl.height();
+      var imgWidth = smallImageEl.width();
+      if (imgHeight * width > imgWidth * height) {
+        adjustLargetImage(imageEl, height * ratio, height * imgWidth / imgHeight * ratio);
+      } else {
+        adjustLargetImage(imageEl, width * imgHeight / imgWidth * ratio, width * ratio);
+      };
     });
-    var ajustLargetImage = function(el, height, width, windowHeight, windowWidth) {
+    var adjustLargetImage = function(el, height, width) {
       el.attr('height', height + 'px');
       el.attr('width', width + 'px');
-      var topOffset = (windowHeight - height) / 2; 
-      var leftOffset = (windowWidth - width) / 2; 
-      el.parent('#large-image-container').css({
-        'top': topOffset,
-        'left': leftOffset
-      });
     };
     $(document).on('click', '#modal-container', function() {
+      $('#large-image').attr('src', '');
       $('#modal-container').addClass('hidden');
     });
 
