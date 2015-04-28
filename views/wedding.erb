@@ -7,19 +7,14 @@
 # weixin or guid cookie
 %>
 <% #ticket
-# !! singleton tucao
-# !! tucao 毛玻璃效果
-# !! zoom in or 放大镜: cursor; overflow; 100%
-# !! bg: color or pic
-# !! modal bug: vertical align 
 # !! footer or easter button
 # !! ga
-# !! modal style: white padding?
-# !! test mobile
-# !! disallow robots
 # !! ruby get cookie
 # !! browser static cache
 # !! server cache
+# !! push and test mobile
+# !! zoom in or 放大镜: cursor; overflow; 100%
+# icon img needs changing
 # css global init
 # big place holder: add cache for small img and use it
 # big pic load lag; use js to load img
@@ -50,7 +45,6 @@
       <% 0.upto (init_img_num - 1) do |i| %>
       <div class="grid hidden" id="<%= i %>">
         <div class="thumb"><img src="images/<%= i %>-small.jpg" width="250" /></div>
-        <div class='tucao'></div>
       </div>
       <% end %>
     </div>
@@ -62,9 +56,6 @@
     </div>
   </div>
   <div id='foot'>
-    <div id='easter-button'>
-      test
-    </div>
   </div>
 </body>
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -81,7 +72,7 @@
       var newElStr = '<div id="batch-' + batchId + '">';
       var actualLoadBatchSize = 0;
       for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
-        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div><div class="tucao"></div></div>';
+        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div></div>';
         actualLoadBatchSize ++;
       };
       var newEl = $(newElStr);
@@ -244,9 +235,8 @@
       for (var i = 0; i < els.length; i ++) {
         var el = $(els[i]);
         var id = el.attr('id');
-        var tucaoEl = el.children('.tucao').text(GLOBALS.tucaoArr[id]);
-        if (!GLOBALS.easterOn) {
-          tucaoEl.addClass('easter');
+        if (GLOBALS.easterOn) {
+          el.find('img').attr('title', GLOBALS.tucaoArr[id]);
         };
       };
     };
