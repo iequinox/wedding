@@ -39,7 +39,7 @@
     <div id="cascade-container">
       <% 0.upto (init_img_num - 1) do |i| %>
       <div class="grid hidden" id="<%= i %>">
-        <div class="thumb"><img src="images/<%= i %>-small.jpg" width="250" /></div>
+        <div class="thumb"><img src="images/<%= i %>-small.JPG" width="250" /></div>
       </div>
       <% end %>
     </div>
@@ -67,7 +67,7 @@
       var newElStr = '<div id="batch-' + batchId + '">';
       var actualLoadBatchSize = 0;
       for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
-        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.jpg" width="250" /></div></div>';
+        newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.JPG" width="250" /></div></div>';
         actualLoadBatchSize ++;
       };
       var newEl = $(newElStr);
