@@ -8,17 +8,17 @@
 # db
 %>
 <% #tickets
-# !! preload the new batch, so that it will not show in the top rows in a short period
 # ngnix + browser static cache (instead of 304)
 # server cache
 # modal: zoom in or 放大镜: cursor; overflow; 100%
-# modal pic preload, to prevent lag 
+# mobile: hard to drag
+# modal pic preload, to prevent lag
 # icon img needs changing
-# css global clean/init 
+# css global clean/init
 # big pic: add arrow
-# bottom loading gif
 # scroll to bottom + modal: quick flash
 # test ie
+# mobile support for tucao title?
 # img alt title
 # gzip
 # js uglify
@@ -52,6 +52,9 @@
     </div>
   </div>
   <div id='foot'>
+    <div id='loading-container' class='hidden'>
+      <img id='loading' src='/images/loading.gif' />
+    </div>
   </div>
 </body>
 <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -66,7 +69,7 @@
 
 </script>
 <script type="text/javascript">
-  $(function() {
+//  $(function() {
     $(window).load(function() {
       renderCascade();
       checkHitBottom();
@@ -74,6 +77,7 @@
     });
     var showNewCascade = function() {
       if (GLOBALS.renderedGridIndex >= GLOBALS.TOTAL_IMG_NUM - 1) return;
+      showLoading();
       var batchId = (GLOBALS.renderedGridIndex + 1);
       var newElStr = '<div id="batch-' + batchId + '" class="hidden">';
       var actualLoadBatchSize = 0;
@@ -88,6 +92,7 @@
       batchEl.find('img').load(function() {
         GLOBALS.loadImgCounter ++;
         if (GLOBALS.loadImgCounter == actualLoadBatchSize) {
+          hideLoading();
           batchEl.removeClass('hidden');
           addTucao(batchEl.find('.grid'));
           renderCascade();
@@ -96,6 +101,15 @@
           GLOBALS.bottomCheckProcessing = false;
         };
       });
+    };
+    var showLoading = function() {
+      var maxColumnHeight = Math.max.apply(null, GLOBALS.columnHeights);
+      $('#loading-container').css({
+        'top': maxColumnHeight + 'px'
+      }).removeClass('hidden');
+    };
+    var hideLoading = function() {
+      $('#loading-container').addClass('hidden');
     };
     // Scroll event
     $(window).scroll(function(){
@@ -106,8 +120,6 @@
       if (GLOBALS.bottomCheckProcessing) return;
       if (hasHitBottom()) {
         GLOBALS.bottomCheckProcessing = true;
-        // Make it async so scroll event could pop up; and thus there won't be a perceivable scroll lag
-        //setTimeout(showNewCascade, 1);
         showNewCascade();
       };
     }
@@ -247,6 +259,6 @@
       };
     };
 
-  })(jQuery);
+//  })(jQuery);
 </script>
 </html>

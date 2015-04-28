@@ -109,3 +109,9 @@ a:hover, a: active {
 #easter-button {
   float: right;
 }
+#loading-container {
+  position: absolute;
+  width: 100%;
+  padding: 30px 0;
+  text-align: center;
+}
