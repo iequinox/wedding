@@ -8,6 +8,7 @@
 # db
 %>
 <% #tickets
+# !! preload the new batch, so that it will not show in the top rows in a short period
 # ngnix + browser static cache (instead of 304)
 # server cache
 # modal: zoom in or 放大镜: cursor; overflow; 100%
@@ -38,7 +39,7 @@
   <div id='main'>
     <div id="cascade-container">
       <% 0.upto (init_img_num - 1) do |i| %>
-      <div class="grid hidden" id="<%= i %>">
+      <div class="grid transition hidden" id="<%= i %>">
         <div class="thumb"><img src="images/<%= i %>-small.JPG" width="250" /></div>
       </div>
       <% end %>
@@ -74,7 +75,7 @@
     var showNewCascade = function() {
       if (GLOBALS.renderedGridIndex >= GLOBALS.TOTAL_IMG_NUM - 1) return;
       var batchId = (GLOBALS.renderedGridIndex + 1);
-      var newElStr = '<div id="batch-' + batchId + '">';
+      var newElStr = '<div id="batch-' + batchId + '" class="hidden">';
       var actualLoadBatchSize = 0;
       for (var i = GLOBALS.renderedGridIndex + 1; i <= GLOBALS.renderedGridIndex + GLOBALS.loadImgBatchSize && i < GLOBALS.TOTAL_IMG_NUM; i++) {
         newElStr += '<div class="grid" id="' + i + '"><div class="thumb"><img src="images/' + i + '-small.JPG" width="250" /></div></div>';
@@ -87,9 +88,11 @@
       batchEl.find('img').load(function() {
         GLOBALS.loadImgCounter ++;
         if (GLOBALS.loadImgCounter == actualLoadBatchSize) {
+          batchEl.removeClass('hidden');
           addTucao(batchEl.find('.grid'));
           renderCascade();
           //checkHitBottom();
+          batchEl.children('.grid').addClass('transition');
           GLOBALS.bottomCheckProcessing = false;
         };
       });

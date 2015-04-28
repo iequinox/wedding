@@ -37,6 +37,8 @@ a:hover, a: active {
   border-radius: 8px;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
+}
+.grid.transition {
   box-shadow: 0 0 11px #666;
   -moz-box-shadow: 0 0 11px #666;
   -webkit-box-shadow: 0 0 11px #666;
@@ -50,6 +52,9 @@ a:hover, a: active {
 }
 .hidden {
   display: none;
+}
+.invisible {
+  visibility: hidden;
 }
 .easter {
   visibility: hidden;

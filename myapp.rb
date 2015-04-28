@@ -1,7 +1,7 @@
 require 'sinatra'
 #require "rack/cache"
 
-use Rack::Cache
+#use Rack::Cache
 
 set :port, 8080
 set :bind, '0.0.0.0'
