@@ -104,9 +104,11 @@
     };
     var showLoading = function() {
       var maxColumnHeight = Math.max.apply(null, GLOBALS.columnHeights);
-      $('#loading-container').css({
-        'top': maxColumnHeight + 'px'
-      }).removeClass('hidden');
+      var el = $('#loading-container');
+      el.css({
+          'top': maxColumnHeight + 'px'
+          }).removeClass('hidden');
+      el[0].scrollIntoView();
     };
     var hideLoading = function() {
       $('#loading-container').addClass('hidden');
