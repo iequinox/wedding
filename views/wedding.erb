@@ -8,8 +8,6 @@
 # db
 %>
 <% #tickets
-# !! ga
-# !! push and test mobile
 # ngnix + browser static cache (instead of 304)
 # server cache
 # modal: zoom in or 放大镜: cursor; overflow; 100%
@@ -31,7 +29,6 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>雁轩</title>
-  <!-- TODO -->
   <link rel='stylesheet' href='css/main.css' media='screen' />
   <link rel="shortcut icon" href="images/icon.png">
 </head>
@@ -238,5 +235,15 @@
     };
 
 //  })(jQuery);
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-62377911-1', 'auto');
+  ga('send', 'pageview');
+
 </script>
 </html>
