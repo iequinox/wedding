@@ -5,19 +5,17 @@
 # request Limit
 # thumbs up; comment
 # weixin or guid cookie
+# db
 %>
-<% #ticket
-# !! footer or easter button
+<% #tickets
 # !! ga
-# !! ruby get cookie
-# !! browser static cache
-# !! server cache
 # !! push and test mobile
-# !! zoom in or 放大镜: cursor; overflow; 100%
+# ngnix + browser static cache (instead of 304)
+# server cache
+# modal: zoom in or 放大镜: cursor; overflow; 100%
+# modal pic preload, to prevent lag 
 # icon img needs changing
-# css global init
-# big place holder: add cache for small img and use it
-# big pic load lag; use js to load img
+# css global clean/init 
 # big pic: add arrow
 # bottom loading gif
 # scroll to bottom + modal: quick flash
@@ -62,9 +60,9 @@
 <script type="text/javascript">
   //$(function() {
     $(window).load(function() {
-      addTucao($('.grid'));
       renderCascade();
       checkHitBottom();
+      addTucao($('.grid'));
     });
     var showNewCascade = function() {
       if (GLOBALS.renderedGridIndex >= GLOBALS.TOTAL_IMG_NUM - 1) return;
@@ -79,7 +77,6 @@
       GLOBALS.loadImgCounter = 0;
       $('#cascade-container').append(newEl);
       var batchEl = $('#batch-' + batchId);
-      console.log(batchEl);
       batchEl.find('img').load(function() {
         GLOBALS.loadImgCounter ++;
         if (GLOBALS.loadImgCounter == actualLoadBatchSize) {
@@ -152,9 +149,8 @@
       var id = $(this).parents('.grid').attr('id');
       $('#modal-container').removeClass('hidden');
       var imageEl = $('#large-image');
-      // Set the src to the small img first, as a fallback
-      //imageEl.attr('src', 'images/' + id + '-small.JPG');
-      imageEl.attr('src', 'images/' + id + '-large.JPG');
+      var imageSrc = 'images/' + id + '-large.JPG';
+      imageEl.attr('src', imageSrc);
       // While the image is loading, we can use the thumbnail pic to calculate the display width/height.
       var smallImageEl = $('#' + id + ' img');
       var ratio = 0.9;
@@ -214,14 +210,14 @@
       renderedGridIndex: -1,
       bottomCheckProcessing: false,
       easterCount: 0,
-      easterOn: true,
+      easterOn: <%= easter_on %>,
       tucaoArr: <%= tucao_arr %>
     };
     // Easter egg
     var showMeTheSecrets = function() {
-      $('.tucao').removeClass('easter');
+      addTucao($('.grid'));
     };
-    $('#easter-button').click(function() {
+    $('#0').click(function() {
       if (GLOBALS.easterCount < 3) {
         GLOBALS.easterCount += 1;
         if (GLOBALS.easterCount == 3) {
